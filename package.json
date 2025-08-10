@@ -4,10 +4,21 @@
   "description": "Make Guitar Playing Better",
   "main": "tailwind.config.js",
   "scripts": {
-    "test": "node --test src/**/*.test.js"
+    "test": "node --test --import tsx src/**/*.test.tsx"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.5.2",
+    "@testing-library/react": "^14.2.1",
+    "jsdom": "^24.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.3"
+  }
 }
