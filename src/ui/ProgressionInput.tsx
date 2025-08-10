@@ -9,6 +9,7 @@ export function ProgressionInput() {
       aria-label="progression"
       value={progression}
       onChange={(e) => setProgression(e.target.value)}
+      className="bg-background border border-muted text-foreground p-2 rounded-2xl"
     />
   )
 }

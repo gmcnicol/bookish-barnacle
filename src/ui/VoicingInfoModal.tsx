@@ -9,16 +9,29 @@ export function VoicingInfoModal() {
 
   return (
     <div>
-      <button onClick={() => setOpen(true)}>Info</button>
+      <button
+        className="border border-muted text-foreground px-3 py-1 rounded-2xl"
+        onClick={() => setOpen(true)}
+      >
+        Info
+      </button>
       {open && (
         <div
           role="dialog"
           aria-modal="true"
           className="fixed inset-0 bg-black/50 flex items-center justify-center"
         >
-          <div className="bg-white p-4" data-testid="voicing-info">
+          <div
+            className="bg-background text-foreground p-4 rounded-2xl"
+            data-testid="voicing-info"
+          >
             <p>{voicing.notes.filter(Boolean).join(', ')}</p>
-            <button onClick={() => setOpen(false)}>Close</button>
+            <button
+              className="mt-4 border border-muted text-foreground px-3 py-1 rounded-2xl"
+              onClick={() => setOpen(false)}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

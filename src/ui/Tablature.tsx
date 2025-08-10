@@ -18,7 +18,11 @@ export function Tablature({ voicing, tuning = defaultTuning }: TablatureProps) {
       return `${t.toLowerCase()}|-${symbol}-`
     })
   return (
-    <pre data-testid="tablature" data-frets={voicing.frets.join(',')}>
+    <pre
+      data-testid="tablature"
+      data-frets={voicing.frets.join(',')}
+      className="bg-background text-foreground font-mono p-2 rounded-2xl"
+    >
       {lines.join('\n')}
     </pre>
   )

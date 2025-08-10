@@ -18,6 +18,7 @@ export function Fretboard({ voicing }: FretboardProps) {
       height={height}
       data-testid="fretboard"
       data-frets={voicing.frets.join(',')}
+      className="text-muted"
     >
       {/* strings */}
       {voicing.frets.map((_, i) => (
@@ -27,7 +28,7 @@ export function Fretboard({ voicing }: FretboardProps) {
           x2={width - 10}
           y1={(i + 0.5) * stringSpacing}
           y2={(i + 0.5) * stringSpacing}
-          stroke="#ccc"
+          stroke="currentColor"
         />
       ))}
       {/* frets */}
@@ -38,7 +39,7 @@ export function Fretboard({ voicing }: FretboardProps) {
           x2={10 + f * fretSpacing}
           y1={0}
           y2={height}
-          stroke="#999"
+          stroke="currentColor"
         />
       ))}
       {/* markers */}
@@ -49,7 +50,8 @@ export function Fretboard({ voicing }: FretboardProps) {
             cx={10 + f * fretSpacing + fretSpacing / 2}
             cy={(i + 0.5) * stringSpacing}
             r={4}
-            fill="#0af"
+            fill="currentColor"
+            className="text-foreground"
           />
         ) : (
           <text
@@ -57,7 +59,8 @@ export function Fretboard({ voicing }: FretboardProps) {
             x={2}
             y={(i + 0.5) * stringSpacing + 4}
             fontSize="8"
-            fill="#f44"
+            fill="currentColor"
+            className="text-red-400"
           >
             x
           </text>
