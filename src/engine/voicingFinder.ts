@@ -3,11 +3,11 @@ import { Tuning, E_STANDARD, fretMatches, FRET_RANGE } from './tuning';
 export type Voicing = {
   frets: number[]; // length 6; -1 = muted; 0..12 = fret
   tones: number[]; // chord tones used (mod 12)
-  span: number;    // max fret - min fret (ignoring -1)
+  span: number;    // max fret - min fret (ignoring -1 and opens)
 };
 
 // Heuristic knobs (relax to debug)
-const MAX_SPAN = 4;
+const MAX_SPAN = 3;
 const MIN_SOUNDING_STRINGS = 3;
 const MAX_SKIPPED_STRING_GAPS = 1;
 
@@ -33,9 +33,8 @@ export function findVoicings(chordTones: number[], tuning: Tuning = E_STANDARD, 
       const sounding = cur.filter(f => f >= 0);
       if (sounding.length < MIN_SOUNDING_STRINGS) return;
 
-      const minF = Math.min(...sounding);
-      const maxF = Math.max(...sounding);
-      const span = maxF - minF;
+      const fretted = sounding.filter(f => f > 0);
+      const span = fretted.length ? Math.max(...fretted) - Math.min(...fretted) : 0;
       if (span > MAX_SPAN) return;
 
       // Count gaps: muted between sounding strings
