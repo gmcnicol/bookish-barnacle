@@ -3,18 +3,20 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import React from 'react'
 import VoicingCarousel from './VoicingCarousel'
 import { useStore } from '../state/store'
-import { Voicing } from '../engine/VoicingFinder'
+import { Voicing } from '../engine'
 import { test, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 const samples: Voicing[] = [
   {
     frets: [3, 2, 0, 0, 0, 3],
-    notes: ['G', 'B', 'D', 'G', 'B', 'G'],
+    tones: [],
+    span: 3,
   },
   {
     frets: [3, 5, 5, 4, 3, 3],
-    notes: ['G', 'D', 'G', 'B', 'D', 'G'],
+    tones: [],
+    span: 2,
   },
 ]
 
