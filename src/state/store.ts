@@ -1,80 +1,78 @@
-import { create } from 'zustand'
-import { computeVoicings as engineComputeVoicings, type Voicing } from '../engine'
+import { create } from 'zustand';
+import { computeVoicings } from '../engine';
+import type { Mode } from '../engine/roman';
+import type { ChordOut } from '../engine';
+import { E_STANDARD } from '../engine/tuning';
 
-interface AppState {
-  key: string
-  mode: string
-  tuning: string[]
-  progression: string
-  voicings: Voicing[]
-  selectedVoicingIdx: number
-  setKey: (k: string) => void
-  setMode: (m: string) => void
-  setTuning: (t: string[]) => void
-  setProgression: (p: string) => void
-  nextVoicing: () => void
-  prevVoicing: () => void
-}
+type AppState = {
+  keyRoot: string;
+  mode: Mode;
+  tuning: number[];
+  progression: string;
 
-function computeVoicings({
-  key,
-  mode,
-  progression,
-}: Pick<AppState, 'key' | 'mode' | 'progression'>): Voicing[] {
-  if (!progression.trim()) return []
-  try {
-    const chords = engineComputeVoicings({
-      key,
-      mode: mode as any,
-      progression,
-    })
-    return chords[0]?.voicings ?? []
-  } catch {
-    return []
-  }
-}
+  chords: ChordOut[];
+  chordIdx: number;
+  voicingIdx: number;
 
-export const useStore = create<AppState>((set) => ({
-  key: 'C',
+  setKey: (k: string) => void;
+  setMode: (m: Mode) => void;
+  setTuning: (t: number[]) => void;
+  setProgression: (p: string) => void;
+  nextVoicing: () => void;
+  prevVoicing: () => void;
+  nextChord: () => void;
+  prevChord: () => void;
+  recompute: () => void;
+};
+
+export const useApp = create<AppState>((set, get) => ({
+  keyRoot: 'C',
   mode: 'major',
-  tuning: ['E', 'A', 'D', 'G', 'B', 'E'],
-  progression: '',
-  voicings: [],
-  selectedVoicingIdx: 0,
-  setKey: (key) =>
-    set((state) => ({
-      key,
-      voicings: computeVoicings({ key, mode: state.mode, progression: state.progression }),
-      selectedVoicingIdx: 0,
-    })),
-  setMode: (mode) =>
-    set((state) => ({
-      mode,
-      voicings: computeVoicings({ key: state.key, mode, progression: state.progression }),
-      selectedVoicingIdx: 0,
-    })),
-  setTuning: (tuning) =>
-    set((state) => ({
-      tuning,
-      voicings: computeVoicings({ key: state.key, mode: state.mode, progression: state.progression }),
-      selectedVoicingIdx: 0,
-    })),
-  setProgression: (progression) =>
-    set((state) => ({
-      progression,
-      voicings: computeVoicings({ key: state.key, mode: state.mode, progression }),
-      selectedVoicingIdx: 0,
-    })),
-  nextVoicing: () =>
-    set(({ selectedVoicingIdx, voicings }) => ({
-      selectedVoicingIdx: voicings.length
-        ? (selectedVoicingIdx + 1) % voicings.length
-        : 0,
-    })),
-  prevVoicing: () =>
-    set(({ selectedVoicingIdx, voicings }) => ({
-      selectedVoicingIdx: voicings.length
-        ? (selectedVoicingIdx - 1 + voicings.length) % voicings.length
-        : 0,
-    })),
-}))
+  tuning: E_STANDARD,
+  progression: 'ii V I',
+
+  chords: [],
+  chordIdx: 0,
+  voicingIdx: 0,
+
+  setKey: (k) => { set({ keyRoot: k }); get().recompute(); },
+  setMode: (m) => { set({ mode: m }); get().recompute(); },
+  setTuning: (t) => { set({ tuning: t }); get().recompute(); },
+  setProgression: (p) => { set({ progression: p }); get().recompute(); },
+
+  nextVoicing: () => {
+    const { chords, chordIdx, voicingIdx } = get();
+    const vCount = chords[chordIdx]?.voicings.length ?? 0;
+    if (!vCount) return;
+    set({ voicingIdx: (voicingIdx + 1) % vCount });
+  },
+  prevVoicing: () => {
+    const { chords, chordIdx, voicingIdx } = get();
+    const vCount = chords[chordIdx]?.voicings.length ?? 0;
+    if (!vCount) return;
+    set({ voicingIdx: (voicingIdx - 1 + vCount) % vCount });
+  },
+
+  nextChord: () => {
+    const { chords, chordIdx } = get();
+    if (!chords.length) return;
+    set({ chordIdx: (chordIdx + 1) % chords.length, voicingIdx: 0 });
+  },
+  prevChord: () => {
+    const { chords, chordIdx } = get();
+    if (!chords.length) return;
+    set({ chordIdx: (chordIdx - 1 + chords.length) % chords.length, voicingIdx: 0 });
+  },
+
+  recompute: () => {
+    const { keyRoot, mode, tuning, progression } = get();
+    const chords = computeVoicings({ key: keyRoot, mode, tuning, progression });
+    set({ chords, chordIdx: 0, voicingIdx: 0 });
+  },
+}));
+
+// Prime store on import
+useApp.getState().recompute();
+
+// Backwards compat
+export const useStore = useApp;
