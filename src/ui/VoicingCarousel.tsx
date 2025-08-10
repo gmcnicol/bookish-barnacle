@@ -10,15 +10,25 @@ export function VoicingCarousel() {
   const prev = useStore((s) => s.prevVoicing)
   const current = voicings[idx]
 
-  if (!current) return <div>No voicings</div>
+  if (!current) return <div className="text-muted">No voicings</div>
 
   return (
-    <div>
+    <div className="space-y-4">
       <Fretboard voicing={current} />
       <Tablature voicing={current} />
-      <div>
-        <button onClick={prev}>Prev</button>
-        <button onClick={next}>Next</button>
+      <div className="flex gap-2">
+        <button
+          className="border border-muted text-foreground px-3 py-1 rounded-2xl"
+          onClick={prev}
+        >
+          Prev
+        </button>
+        <button
+          className="border border-muted text-foreground px-3 py-1 rounded-2xl"
+          onClick={next}
+        >
+          Next
+        </button>
       </div>
     </div>
   )
