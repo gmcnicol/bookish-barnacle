@@ -1,32 +1,16 @@
-import React from 'react'
-import { Voicing } from '../engine'
+import React from 'react';
 
-interface TablatureProps {
-  voicing: Voicing
-  tuning?: string[]
-}
+// frets length 6 (low→high). Display top→bottom as high→low
+export default function Tablature({ frets }: { frets: number[] }) {
+  const names = ['e', 'B', 'G', 'D', 'A', 'E'];
+  const lines = [...frets].reverse().map((f, i) => {
+    const mark = f < 0 ? 'x' : String(f);
+    return names[i] + '|' + mark.padEnd(3, '-') + '-----|';
+  });
 
-const defaultTuning = ['E', 'A', 'D', 'G', 'B', 'E']
-
-export function Tablature({ voicing, tuning = defaultTuning }: TablatureProps) {
-  const lines = tuning
-    .slice()
-    .reverse()
-    .map((t, idx) => {
-      const f = voicing.frets[5 - idx]
-      const symbol = f < 0 ? 'x' : f.toString()
-      return `${t.toLowerCase()}|-${symbol}-`
-    })
   return (
-    <pre
-      data-testid="tablature"
-      data-frets={voicing.frets.join(',')}
-      className="bg-background text-foreground font-mono p-2 rounded-2xl"
-    >
-      {lines.join('\n')}
+    <pre className="text-xs md:text-sm leading-4 bg-zinc-900 border border-zinc-800 rounded-xl p-3 overflow-auto">
+{lines.join('\n')}
     </pre>
-  )
+  );
 }
-
-export default Tablature
-
