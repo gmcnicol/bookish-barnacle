@@ -1,10 +1,5 @@
 import { create } from 'zustand'
-import {
-  resolveChord,
-  findVoicings,
-  filterPlayable,
-  type Voicing,
-} from '../engine'
+import { computeVoicings as engineComputeVoicings, type Voicing } from '../engine'
 
 interface AppState {
   key: string
@@ -24,14 +19,16 @@ interface AppState {
 function computeVoicings({
   key,
   mode,
-  tuning,
   progression,
-}: Pick<AppState, 'key' | 'mode' | 'tuning' | 'progression'>): Voicing[] {
-  const token = progression.trim().split(/\s+/)[0]
-  if (!token) return []
+}: Pick<AppState, 'key' | 'mode' | 'progression'>): Voicing[] {
+  if (!progression.trim()) return []
   try {
-    const chord = resolveChord(token, key, mode)
-    return filterPlayable(findVoicings(chord, tuning))
+    const chords = engineComputeVoicings({
+      key,
+      mode: mode as any,
+      progression,
+    })
+    return chords[0]?.voicings ?? []
   } catch {
     return []
   }
@@ -47,25 +44,25 @@ export const useStore = create<AppState>((set) => ({
   setKey: (key) =>
     set((state) => ({
       key,
-      voicings: computeVoicings({ ...state, key }),
+      voicings: computeVoicings({ key, mode: state.mode, progression: state.progression }),
       selectedVoicingIdx: 0,
     })),
   setMode: (mode) =>
     set((state) => ({
       mode,
-      voicings: computeVoicings({ ...state, mode }),
+      voicings: computeVoicings({ key: state.key, mode, progression: state.progression }),
       selectedVoicingIdx: 0,
     })),
   setTuning: (tuning) =>
     set((state) => ({
       tuning,
-      voicings: computeVoicings({ ...state, tuning }),
+      voicings: computeVoicings({ key: state.key, mode: state.mode, progression: state.progression }),
       selectedVoicingIdx: 0,
     })),
   setProgression: (progression) =>
     set((state) => ({
       progression,
-      voicings: computeVoicings({ ...state, progression }),
+      voicings: computeVoicings({ key: state.key, mode: state.mode, progression }),
       selectedVoicingIdx: 0,
     })),
   nextVoicing: () =>

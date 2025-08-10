@@ -1,5 +1,5 @@
 import React from 'react'
-import { Voicing } from '../engine/VoicingFinder'
+import { Voicing } from '../engine'
 
 interface FretboardProps {
   voicing: Voicing
