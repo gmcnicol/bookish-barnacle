@@ -20,10 +20,35 @@ export function findVoicings(chordTones: number[], tuning: Tuning = E_STANDARD, 
   });
 
   const results: Voicing[] = [];
+  const seen = new Set<string>();
+
   // Explore windows of 4 adjacent strings to reduce combinatorics
   for (let start = 0; start <= 2; start++) { // windows: [0..3], [1..4], [2..5]
-    backtrack(start, start+3, Array(6).fill(-1));
+    const end = start + 3;
+    const outside: number[] = [];
+    for (let i = 0; i < 6; i++) {
+      if (i < start || i > end) outside.push(i);
+    }
+
+    const base = Array(6).fill(-1);
+    assignOutside(0, base);
     if (results.length >= limit) break;
+
+    function assignOutside(i: number, cur: number[]) {
+      if (results.length >= limit) return;
+      if (i >= outside.length) {
+        backtrack(start, end, cur, start);
+        return;
+      }
+      const idx = outside[i];
+      const opts = candidatesPerString[idx].filter(f => f <= 0); // allow mute or open only
+      for (const f of opts) {
+        const next = cur.slice();
+        next[idx] = f;
+        assignOutside(i + 1, next);
+        if (results.length >= limit) return;
+      }
+    }
   }
   return results.slice(0, limit);
 
@@ -54,6 +79,10 @@ export function findVoicings(chordTones: number[], tuning: Tuning = E_STANDARD, 
         if (chordTones.includes(note)) used.add(note);
       }
       if (used.size < Math.min(3, chordTones.length)) return;
+
+      const key = cur.join(',');
+      if (seen.has(key)) return;
+      seen.add(key);
 
       results.push({ frets: cur.slice(), tones: Array.from(used), span });
       return;
