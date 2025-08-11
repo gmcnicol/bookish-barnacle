@@ -8,8 +8,8 @@ export type Voicing = {
 
 // Heuristic knobs (relax to debug)
 const MAX_SPAN = 3;
-const MIN_SOUNDING_STRINGS = 3;
-const MAX_SKIPPED_STRING_GAPS = 1;
+const MIN_SOUNDING_STRINGS = 2;
+const MAX_SKIPPED_STRING_GAPS = 2;
 
 export function findVoicings(chordTones: number[], tuning: Tuning = E_STANDARD, limit = 8): Voicing[] {
   // Precompute candidate frets per string for ANY chord tone (+ muted option)
