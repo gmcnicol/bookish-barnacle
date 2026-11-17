@@ -38,6 +38,9 @@ export default function App() {
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <div className="mx-auto max-w-6xl space-y-7 px-4 py-6 sm:px-6 sm:py-10">
         <header className="space-y-2">
+          <div className="flex justify-end pb-2">
+            <a className="btn" href="https://buymeacoffee.com/garethmcnicol" target="_blank" rel="noopener noreferrer">☕ Buy me a coffee</a>
+          </div>
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-emerald-300">Fretboard explorer</p>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Find your way around a chord.</h1>
           <p className="max-w-2xl text-sm leading-relaxed text-zinc-400">Explore shapes, follow inversions and connect a progression without losing your place on the neck.</p>
