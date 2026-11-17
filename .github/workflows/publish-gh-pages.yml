@@ -3,6 +3,8 @@ name: Build & Publish to GitHub Pages
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: "pages-${{ github.ref }}"
   cancel-in-progress: true
 
 jobs:
@@ -30,6 +32,12 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Check types
+        run: npm run check
+
+      - name: Test theory, voicings and navigation
+        run: npm test
+
       - name: Build (with GH Pages base path)
         env:
           # Set base to "/<repo>/" so assets work at the subdirectory
@@ -40,12 +48,14 @@ jobs:
           cp dist/index.html dist/404.html
 
       - name: Upload artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
