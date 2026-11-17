@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :focus-visible { @apply outline-none ring-2 ring-emerald-300 ring-offset-2 ring-offset-zinc-950; }
+  button:disabled { @apply cursor-not-allowed opacity-40; }
+  select, input { color-scheme: dark; }
+}
+@layer components {
+  .btn { @apply rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-200 transition-colors hover:border-zinc-500 hover:bg-zinc-800; }
+  .btn-accent { @apply border-emerald-400/40 bg-emerald-400/10 text-emerald-200 hover:bg-emerald-400/20; }
+}
